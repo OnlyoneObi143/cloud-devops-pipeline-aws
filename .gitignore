@@ -1,6 +1,13 @@
+# Node.js
 node_modules/
 .env
+*.log
 
 # Docker
-*.log
 .dockerignore
+
+# Terraform
+.terraform/
+terraform.tfstate
+terraform.tfstate.backup
+*.tfplan
