@@ -1,6 +1,6 @@
 # cloud-devops-pipeline-aws Project
 
-This is **Phase 1-2** of my personal project demonstrating how to build and deploy a containerized Node.js application using GitLab CI/CD and AWS services like ECS, ECR, and CloudWatch. It simulates a real-world DevOps pipeline and showcases skills relevant to both DevOps and Cloud Engineering roles.
+This is **Phase 1-3** of my personal project demonstrating how to build and deploy a containerized Node.js application using GitLab CI/CD and AWS services like ECS, ECR, and CloudWatch. It simulates a real-world DevOps pipeline and showcases skills relevant to both DevOps and Cloud Engineering roles.
 
 ## Tech Stack
 - Node.js + Express
@@ -17,3 +17,9 @@ This is **Phase 1-2** of my personal project demonstrating how to build and depl
 ✅ Image built and tested locally using Docker  
 ✅ Docker image tagged and pushed to AWS ECR  
 ✅ Updated project status pushed to GitHub and GitLab
+
+## Phase 3 Summary
+✅ ECS Cluster and Fargate task definition created using Terraform  
+✅ IAM role configured for task execution  
+✅ Deployed Node.js container to ECS Fargate  
+✅ Application running publicly on assigned IP via AWS infrastructure 
