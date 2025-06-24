@@ -1,4 +1,3 @@
-
 image: docker:latest
 
 services:
@@ -7,14 +6,15 @@ services:
 variables:
   DOCKER_HOST: tcp://docker:2375/
   DOCKER_TLS_CERTDIR: ""
+  IMAGE_NAME: registry.gitlab.com/group13743924/cloud-devops-pipeline-aws/node-app
+
+before_script:
+  - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
 
 stages:
   - build
   - push
   - deploy
-
-variables:
-  IMAGE_NAME: registry.gitlab.com/group13743924/cloud-devops-pipeline-aws/node-app
 
 build:
   stage: build
@@ -24,11 +24,11 @@ build:
 push:
   stage: push
   script:
-    - echo "$CI_JOB_TOKEN" | docker login -u gitlab-ci-token --password-stdin $CI_REGISTRY
     - docker push $IMAGE_NAME:latest
 
 deploy:
   stage: deploy
   script:
     - aws ecs update-service --cluster node-app-cluster --service node-app-service --force-new-deployment
+
 
