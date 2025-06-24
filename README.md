@@ -23,3 +23,5 @@ This is **Phase 1-3** of my personal project demonstrating how to build and depl
 ✅ IAM role configured for task execution  
 ✅ Deployed Node.js container to ECS Fargate  
 ✅ Application running publicly on assigned IP via AWS infrastructure 
+
+# Triggered CI/CD - Phase 4 test
