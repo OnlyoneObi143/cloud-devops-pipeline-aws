@@ -1,0 +1,23 @@
+stages:
+  - build
+  - push
+  - deploy
+
+variables:
+  IMAGE_NAME: $CI_REGISTRY_IMAGE/node-app
+
+build:
+  stage: build
+  script:
+    - docker build -t $IMAGE_NAME:latest .
+
+push:
+  stage: push
+  script:
+    - echo $CI_JOB_TOKEN | docker login -u gitlab-ci-token --password-stdin $CI_REGISTRY
+    - docker push $IMAGE_NAME:latest
+
+deploy:
+  stage: deploy
+  script:
+    - aws ecs update-service --cluster node-app-cluster --service node-app-service --force-new-deployment
