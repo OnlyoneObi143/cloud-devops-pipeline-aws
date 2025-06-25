@@ -4,7 +4,7 @@ const port = process.env.PORT || 3001; //sets the port number the app will liste
 
 //sends message to user when the website is visted
 app.get('/', (req, res) => {
-  res.send('Hello from the new version!');
+  res.send('Hello from the new versionPt2!');
 });
 
 //starts sever and listens for requests
