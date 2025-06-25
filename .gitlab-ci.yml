@@ -6,7 +6,7 @@ services:
 variables:
   DOCKER_HOST: tcp://docker:2375/
   DOCKER_TLS_CERTDIR: ""
-  IMAGE_NAME: registry.gitlab.com/group13743924/cloud-devops-pipeline-aws/node-app
+  IMAGE_NAME: registry.gitlab.com/group13743924/cloud-devops-pipeline-aws
 
 stages:
   - build_and_push
@@ -23,13 +23,12 @@ deploy:
   stage: deploy
   image: amazon/aws-cli:2.15.12
   script:
-    - echo "KEY: $AWS_ACCESS_KEY_ID"
-    - echo "SECRET: $AWS_SECRET_ACCESS_KEY"
-    - echo "REGION: $AWS_REGION"
     - aws configure set aws_access_key_id "$AWS_ACCESS_KEY_ID"
     - aws configure set aws_secret_access_key "$AWS_SECRET_ACCESS_KEY"
     - aws configure set region "$AWS_REGION"
     - aws ecs update-service --cluster node-app-cluster --service node-app-service --force-new-deployment
+
+
 
 
 
