@@ -21,14 +21,13 @@ build_and_push:
 
 deploy:
   stage: deploy
-  image: python:3.11-slim
-  before_script:
-    - pip install awscli
+  image: amazon/aws-cli:2.15.12
   script:
     - aws configure set aws_access_key_id "$AWS_ACCESS_KEY_ID"
     - aws configure set aws_secret_access_key "$AWS_SECRET_ACCESS_KEY"
     - aws configure set region "$AWS_REGION"
     - aws ecs update-service --cluster node-app-cluster --service node-app-service --force-new-deployment
+
 
 
 
