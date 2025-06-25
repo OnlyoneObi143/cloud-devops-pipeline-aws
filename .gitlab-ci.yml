@@ -15,7 +15,7 @@ stages:
 build_and_push:
   stage: build_and_push
   script:
-    - echo "$CI_JOB_TOKEN" | docker login -u gitlab-ci-token --password-stdin $CI_REGISTRY
+    - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin $CI_REGISTRY
     - docker build -t $IMAGE_NAME:latest .
     - docker push $IMAGE_NAME:latest
 
@@ -23,7 +23,11 @@ deploy:
   stage: deploy
   image: amazon/aws-cli:2.15.12
   script:
+    - aws configure set aws_access_key_id "$AWS_ACCESS_KEY_ID"
+    - aws configure set aws_secret_access_key "$AWS_SECRET_ACCESS_KEY"
+    - aws configure set region "$AWS_REGION"
     - aws ecs update-service --cluster node-app-cluster --service node-app-service --force-new-deployment
+
 
 
 
