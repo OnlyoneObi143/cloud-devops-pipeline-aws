@@ -9,14 +9,19 @@ variables:
   IMAGE_NAME: registry.gitlab.com/group13743924/cloud-devops-pipeline-aws/node-app
 
 stages:
-  - build_and_push
+  - build
+  - push
   - deploy
 
-build_and_push:
-  stage: build_and_push
+build:
+  stage: build
+  script:
+    - docker build -t $IMAGE_NAME:latest .
+
+push:
+  stage: push
   script:
     - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin $CI_REGISTRY
-    - docker build -t $IMAGE_NAME:latest .
     - docker push $IMAGE_NAME:latest
 
 deploy:
@@ -27,6 +32,7 @@ deploy:
     - aws configure set aws_secret_access_key "$AWS_SECRET_ACCESS_KEY"
     - aws configure set region "$AWS_REGION"
     - aws ecs update-service --cluster node-app-cluster --service node-app-service --force-new-deployment
+
 
 
 
