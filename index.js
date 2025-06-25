@@ -4,7 +4,7 @@ const port = process.env.PORT || 3001; //sets the port number the app will liste
 
 //sends message to user when the website is visted
 app.get('/', (req, res) => {
-  res.send('Hello from the new versionPt2!');
+  res.send('Hello from your AWS DevOps project!');
 });
 
 //starts sever and listens for requests
