@@ -1,37 +1,31 @@
-# Use Docker as the base image for building and pushing container images
+# Use Docker image to build/push containers
 image: docker:latest
 
-# Enable Docker-in-Docker service
 services:
   - docker:dind
 
-# Global variables used throughout the pipeline
 variables:
   DOCKER_HOST: tcp://docker:2375/
   DOCKER_TLS_CERTDIR: ""
   IMAGE_NAME: registry.gitlab.com/group13743924/cloud-devops-pipeline-aws/node-app
 
-# Define pipeline stages
 stages:
   - build_and_push
   - deploy
 
-# Build and push the Docker image tagged with the current commit's short SHA
 build_and_push:
   stage: build_and_push
   script:
-    - export IMAGE_TAG=$CI_COMMIT_SHORT_SHA
+    - export IMAGE_TAG="$CI_COMMIT_SHORT_SHA"
     - echo "Building image with tag: $IMAGE_TAG"
     - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin $CI_REGISTRY
     - docker build -t $IMAGE_NAME:$IMAGE_TAG .
     - docker push $IMAGE_NAME:$IMAGE_TAG
     - echo "image_tag=$IMAGE_TAG" > image_tag.env
-    - ls -la  # debug step to confirm the file exists
   artifacts:
     reports:
       dotenv: image_tag.env
 
-# Use Terraform to update the ECS task definition with the new image tag
 deploy:
   stage: deploy
   image: hashicorp/terraform:light
@@ -41,6 +35,7 @@ deploy:
   script:
     - terraform init
     - terraform apply -auto-approve
+
 
 
 
