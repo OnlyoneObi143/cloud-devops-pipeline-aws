@@ -20,18 +20,11 @@ stages:
 build_and_push:
   stage: build_and_push
   script:
-    # Tag image with commit SHA for traceability
     - export IMAGE_TAG=$CI_COMMIT_SHORT_SHA
     - echo "Building image with tag: $IMAGE_TAG"
-
-    # Log in to GitLab Container Registry
     - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin $CI_REGISTRY
-
-    # Build and push image with tag
     - docker build -t $IMAGE_NAME:$IMAGE_TAG .
     - docker push $IMAGE_NAME:$IMAGE_TAG
-
-    # Save the image tag for use in the deploy stage
     - echo "image_tag=$IMAGE_TAG" > image_tag.env
   artifacts:
     reports:
@@ -42,14 +35,12 @@ deploy:
   stage: deploy
   image: hashicorp/terraform:light
   before_script:
-    # Install bash so we can write the tfvars file
     - apk add --no-cache bash
-
-    # Create a terraform.tfvars file that injects the new image tag
     - echo "image_tag = \"$image_tag\"" > terraform.tfvars
   script:
     - terraform init
     - terraform apply -auto-approve
+
 
 
 
