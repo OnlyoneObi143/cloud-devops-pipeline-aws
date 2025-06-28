@@ -1,3 +1,8 @@
+variable "image_tag" {
+  description = "Git commit SHA used to tag the Docker image"
+  type        = string
+}
+
 #ECS cluster to run our containers
 resource "aws_ecs_cluster" "app_cluster" {
   name = "node-app-cluster"
@@ -39,7 +44,9 @@ resource "aws_ecs_task_definition" "app" {
   container_definitions = jsonencode([
     {
       name      = "node-app"
-      image = "203918869432.dkr.ecr.us-east-1.amazonaws.com/node-app-devops:latest"
+      
+      # uses the image tag passed to reference the correct container image version
+      image = "203918869432.dkr.ecr.us-east-1.amazonaws.com/node-app-devops:${var.image_tag}" 
 
       portMappings = [{
         containerPort = 3001

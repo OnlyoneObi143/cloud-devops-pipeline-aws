@@ -1,34 +1,57 @@
+# Use Docker as the base image for building and pushing container images
 image: docker:latest
 
+# Enable Docker-in-Docker service
 services:
   - docker:dind
 
+# Global variables used throughout the pipeline
 variables:
   DOCKER_HOST: tcp://docker:2375/
   DOCKER_TLS_CERTDIR: ""
   IMAGE_NAME: registry.gitlab.com/group13743924/cloud-devops-pipeline-aws/node-app
 
+# Define pipeline stages
 stages:
   - build_and_push
   - deploy
 
+# Build and push the Docker image tagged with the current commit's short SHA
 build_and_push:
   stage: build_and_push
   script:
-    - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin $CI_REGISTRY
-    - docker build -t $IMAGE_NAME:latest .
-    - docker push $IMAGE_NAME:latest
+    # Tag image with commit SHA for traceability
+    - export IMAGE_TAG=$CI_COMMIT_SHORT_SHA
+    - echo "Building image with tag: $IMAGE_TAG"
 
+    # Log in to GitLab Container Registry
+    - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin $CI_REGISTRY
+
+    # Build and push image with tag
+    - docker build -t $IMAGE_NAME:$IMAGE_TAG .
+    - docker push $IMAGE_NAME:$IMAGE_TAG
+
+    # Save the image tag for use in the deploy stage
+    - echo "image_tag=$IMAGE_TAG" > image_tag.env
+  artifacts:
+    reports:
+      dotenv: image_tag.env
+
+# Use Terraform to update the ECS task definition with the new image tag
 deploy:
   stage: deploy
-  image: python:3.11-slim
+  image: hashicorp/terraform:light
   before_script:
-    - pip install awscli
+    # Install bash so we can write the tfvars file
+    - apk add --no-cache bash
+
+    # Create a terraform.tfvars file that injects the new image tag
+    - echo "image_tag = \"$image_tag\"" > terraform.tfvars
   script:
-    - aws configure set aws_access_key_id "$AWS_ACCESS_KEY_ID"
-    - aws configure set aws_secret_access_key "$AWS_SECRET_ACCESS_KEY"
-    - aws configure set region "$AWS_REGION"
-    - aws ecs update-service --cluster node-app-cluster --service node-app-service --force-new-deployment
+    - terraform init
+    - terraform apply -auto-approve
+
+
 
 
 
