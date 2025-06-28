@@ -35,15 +35,24 @@ resource "aws_ecs_task_definition" "app" {
   memory                   = "512"                        # Memory in MiB
   execution_role_arn       = aws_iam_role.ecs_task_execution_role.arn  # Role with permissions
 
-  # Define the container to run in this task
+  # Define the container and enable CloudWatch logging
   container_definitions = jsonencode([
     {
       name      = "node-app"
-      image     = "203918869432.dkr.ecr.us-east-1.amazonaws.com/node-app-devops:latest"  # From ECR
+      image = "203918869432.dkr.ecr.us-east-1.amazonaws.com/node-app-devops:ce181e43"
+
       portMappings = [{
-        containerPort = 3001                        # Internal app port
-        hostPort      = 3001                        # Port on the host (ECS/Fargate)
-      }]
+        containerPort = 3001
+        hostPort      = 3001
+      }],
+      logConfiguration = {                       # Enable logging for this container
+        logDriver = "awslogs",                   # Use AWS CloudWatch Logs
+        options = {
+          awslogs-group         = aws_cloudwatch_log_group.app_logs.name,  # Use the log group we defined
+          awslogs-region        = "us-east-1",                              # Your AWS region
+          awslogs-stream-prefix = "ecs"                                     # Prefix for each log stream
+        }
+      }
     }
   ])
 }
@@ -62,3 +71,9 @@ resource "aws_ecs_service" "app_service" {
     assign_public_ip = true                        # Give public IP for internet access
   }
 }
+
+# CloudWatch Log Group for container logs
+  resource "aws_cloudwatch_log_group" "app_logs" {
+  name              = "/ecs/node-app-devops"  # name for the logs
+  retention_in_days = 7                       # Retain logs for 7 days
+  }
