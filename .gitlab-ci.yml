@@ -20,7 +20,8 @@ stages:
 build_and_push:
   stage: build_and_push
   script:
-   - echo "Building image with tag: $CI_COMMIT_SHORT_SHA"
+   - >
+     echo "Building image with tag: ${CI_COMMIT_SHORT_SHA}"
    - docker build -t $IMAGE_NAME:$CI_COMMIT_SHORT_SHA .
    - docker push $IMAGE_NAME:$CI_COMMIT_SHORT_SHA
    - echo "image_tag=$CI_COMMIT_SHORT_SHA" > image_tag.env
