@@ -20,12 +20,13 @@ stages:
 build_and_push:
   stage: build_and_push
   script:
-   - >
-     echo "Building image with tag: ${CI_COMMIT_SHORT_SHA}"
-   - docker build -t $IMAGE_NAME:$CI_COMMIT_SHORT_SHA .
-   - docker push $IMAGE_NAME:$CI_COMMIT_SHORT_SHA
-   - echo "image_tag=$CI_COMMIT_SHORT_SHA" > image_tag.env
-
+    - export IMAGE_TAG=$CI_COMMIT_SHORT_SHA
+    - echo "Building image with tag: $IMAGE_TAG"
+    - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin $CI_REGISTRY
+    - docker build -t $IMAGE_NAME:$IMAGE_TAG .
+    - docker push $IMAGE_NAME:$IMAGE_TAG
+    - echo "image_tag=$IMAGE_TAG" > image_tag.env
+    - ls -la  # debug step to confirm the file exists
   artifacts:
     reports:
       dotenv: image_tag.env
@@ -40,6 +41,7 @@ deploy:
   script:
     - terraform init
     - terraform apply -auto-approve
+
 
 
 
