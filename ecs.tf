@@ -74,6 +74,10 @@ resource "aws_ecs_service" "app_service" {
 
   force_new_deployment = true
 
+   lifecycle {
+    ignore_changes = [task_definition]
+  }
+
   network_configuration {
     subnets         = [aws_subnet.public.id]          # VPC subnet to launch in
     security_groups = [aws_security_group.app_sg.id]  # Allow traffic to/from the container
