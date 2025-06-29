@@ -27,14 +27,17 @@ build_and_push:
 
 deploy:
   stage: deploy
-  image: hashicorp/terraform:light
-  entrypoint: [""]
+  image:
+    name: hashicorp/terraform:light
+    entrypoint: [""]
   before_script:
     - apk add --no-cache bash
-  script:
+    - echo "Using image tag:$image_tag"
     - echo "image_tag = \"$image_tag\"" > terraform.tfvars
+  script:
     - terraform init
     - terraform apply -auto-approve
+
 
 
 
