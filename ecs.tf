@@ -31,6 +31,12 @@ resource "aws_iam_role_policy_attachment" "ecs_task_execution_policy" {
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
 }
 
+# CloudWatch Log Group for container logs
+  resource "aws_cloudwatch_log_group" "app_logs" {
+  name              = "/ecs/node-app-devops"  # name for the logs
+  retention_in_days = 7                       # Retain logs for 7 days
+  }
+
 # Define the ECS task (like a container blueprint)
 resource "aws_ecs_task_definition" "app" {
   family                   = "node-app-task"              # Name group for related tasks
@@ -85,8 +91,4 @@ resource "aws_ecs_service" "app_service" {
   }
 }
 
-# CloudWatch Log Group for container logs
-  resource "aws_cloudwatch_log_group" "app_logs" {
-  name              = "/ecs/node-app-devops"  # name for the logs
-  retention_in_days = 7                       # Retain logs for 7 days
-  }
+
