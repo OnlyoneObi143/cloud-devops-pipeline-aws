@@ -44,7 +44,7 @@ resource "aws_ecs_task_definition" "app" {
   container_definitions = jsonencode([
     {
       name      = "node-app"
-      
+
       # uses the image tag passed to reference the correct container image version
       image = "203918869432.dkr.ecr.us-east-1.amazonaws.com/node-app-devops:${var.image_tag}" 
 
@@ -71,6 +71,8 @@ resource "aws_ecs_service" "app_service" {
   task_definition = aws_ecs_task_definition.app.arn
   launch_type     = "FARGATE"
   desired_count   = 1                              # Run 1 instance of this task
+
+  force_new_deployment = true
 
   network_configuration {
     subnets         = [aws_subnet.public.id]          # VPC subnet to launch in
