@@ -22,7 +22,7 @@ build_and_push:
     - aws configure set aws_access_key_id "$AWS_ACCESS_KEY_ID"
     - aws configure set aws_secret_access_key "$AWS_SECRET_ACCESS_KEY"
     - aws configure set region "$AWS_REGION"
-    - eval $(aws ecr get-login-password | docker login --username AWS --password-stdin $ECR_REPO)
+    - aws ecr get-login-password | docker login --username AWS --password-stdin $ECR_REPO
   script:
     - export IMAGE_TAG=$CI_COMMIT_SHORT_SHA
     - echo "Building image with tag:$IMAGE_TAG"
