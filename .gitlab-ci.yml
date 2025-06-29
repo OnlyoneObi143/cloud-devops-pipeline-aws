@@ -1,3 +1,5 @@
+# .gitlab-ci.yml (updated to build, tag, and push to AWS ECR)
+
 image: docker:latest
 
 services:
@@ -6,7 +8,8 @@ services:
 variables:
   DOCKER_HOST: tcp://docker:2375/
   DOCKER_TLS_CERTDIR: ""
-  IMAGE_NAME: registry.gitlab.com/group13743924/cloud-devops-pipeline-aws/node-app
+  AWS_REGION: us-east-1
+  ECR_REPO: 203918869432.dkr.ecr.us-east-1.amazonaws.com/node-app-devops
 
 stages:
   - build_and_push
@@ -14,12 +17,17 @@ stages:
 
 build_and_push:
   stage: build_and_push
+  image: amazon/aws-cli:2.15.12
+  before_script:
+    - aws configure set aws_access_key_id "$AWS_ACCESS_KEY_ID"
+    - aws configure set aws_secret_access_key "$AWS_SECRET_ACCESS_KEY"
+    - aws configure set region "$AWS_REGION"
+    - eval $(aws ecr get-login-password | docker login --username AWS --password-stdin $ECR_REPO)
   script:
-    - export IMAGE_TAG="$CI_COMMIT_SHORT_SHA"
-    - echo "Building image with tag:$IMAGE_TAG"
-    - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin "$CI_REGISTRY"
-    - docker build -t "$IMAGE_NAME:$IMAGE_TAG" .
-    - docker push "$IMAGE_NAME:$IMAGE_TAG"
+    - export IMAGE_TAG=$CI_COMMIT_SHORT_SHA
+    - echo "Building image with tag: $IMAGE_TAG"
+    - docker build -t $ECR_REPO:$IMAGE_TAG .
+    - docker push $ECR_REPO:$IMAGE_TAG
     - echo "image_tag=$IMAGE_TAG" > image_tag.env
   artifacts:
     reports:
@@ -31,12 +39,12 @@ deploy:
     name: hashicorp/terraform:light
     entrypoint: [""]
   before_script:
-    - apk add --no-cache bash
-    - echo "Using image tag:$image_tag"
+    - echo "Using image tag: $image_tag"
     - echo "image_tag = \"$image_tag\"" > terraform.tfvars
   script:
     - terraform init
     - terraform apply -auto-approve
+
 
 
 
