@@ -21,16 +21,18 @@ build_and_push:
     - aws configure set aws_access_key_id "$AWS_ACCESS_KEY_ID"
     - aws configure set aws_secret_access_key "$AWS_SECRET_ACCESS_KEY"
     - aws configure set region "$AWS_REGION"
+    - export IMAGE_TAG=$CI_COMMIT_SHORT_SHA
+    - echo "image_tag=$IMAGE_TAG" > image_tag.env  
     - aws ecr get-login-password | docker login --username AWS --password-stdin $ECR_REPO
   script:
-    - export IMAGE_TAG=$CI_COMMIT_SHORT_SHA
     - echo "Building image with tag:$IMAGE_TAG"
     - docker build -t $ECR_REPO:$IMAGE_TAG .
     - docker push $ECR_REPO:$IMAGE_TAG
-    - echo "image_tag=$IMAGE_TAG" > image_tag.env
   artifacts:
-    reports:
-      dotenv: image_tag.env
+    paths:
+      - image_tag.env   
+    expire_in: 1 hour
+
 
 deploy:
   stage: deploy
