@@ -84,6 +84,8 @@ resource "aws_ecs_service" "app_service" {
     ignore_changes = [task_definition]
   }
 
+  depends_on = [aws_ecs_task_definition.app]
+
   network_configuration {
     subnets         = [aws_subnet.public.id]          # VPC subnet to launch in
     security_groups = [aws_security_group.app_sg.id]  # Allow traffic to/from the container
