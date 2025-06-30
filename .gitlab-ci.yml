@@ -1,4 +1,4 @@
-image: public.ecr.aws/aws-cli/aws-cli:2.15.12
+image: docker:20.10.16
 
 services:
   - docker:dind
@@ -15,8 +15,9 @@ stages:
 
 build_and_push:
   stage: build_and_push
+  image: amazon/aws-cli:2.15.12
   before_script:
-    - yum install -y docker  || apk add --no-cache docker  || apt-get update && apt-get install -y docker.io
+    - apk add --no-cache docker
     - aws configure set aws_access_key_id "$AWS_ACCESS_KEY_ID"
     - aws configure set aws_secret_access_key "$AWS_SECRET_ACCESS_KEY"
     - aws configure set region "$AWS_REGION"
@@ -42,6 +43,7 @@ deploy:
   script:
     - terraform init
     - terraform apply -auto-approve
+
 
 
 
