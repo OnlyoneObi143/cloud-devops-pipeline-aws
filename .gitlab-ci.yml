@@ -1,4 +1,4 @@
-image: docker:20.10.16  
+image: public.ecr.aws/aws-cli/aws-cli:2.15.12
 
 services:
   - docker:dind
@@ -15,10 +15,9 @@ stages:
 
 build_and_push:
   stage: build_and_push
-  image: docker:20.10.16
   before_script:
-    - apt-get update && apt-get install -y curl python3 python3-pip
-    - pip3 install awscli
+    - echo "Installing Docker manually..."
+    - curl -fsSL https://get.docker.com | sh
     - aws configure set aws_access_key_id "$AWS_ACCESS_KEY_ID"
     - aws configure set aws_secret_access_key "$AWS_SECRET_ACCESS_KEY"
     - aws configure set region "$AWS_REGION"
@@ -32,19 +31,19 @@ build_and_push:
   artifacts:
     reports:
       dotenv: image_tag.env
- 
 
 deploy:
   stage: deploy
   image:
     name: hashicorp/terraform:light
-    entrypoint: [""]  
+    entrypoint: [""]
   before_script:
     - echo "Using image tag:$image_tag"
     - echo "image_tag = \"$image_tag\"" > terraform.tfvars
   script:
     - terraform init
     - terraform apply -auto-approve
+
 
 
 
