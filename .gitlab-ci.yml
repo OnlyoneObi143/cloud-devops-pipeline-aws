@@ -36,6 +36,8 @@ build_and_push:
 
 deploy:
   stage: deploy
+  dependencies:
+    - build_and_push
   image:
     name: hashicorp/terraform:light
     entrypoint: [""]
@@ -45,6 +47,7 @@ deploy:
   script:
     - terraform init
     - terraform apply -auto-approve
+
 
 
 
