@@ -15,24 +15,24 @@ stages:
 
 build_and_push:
   stage: build_and_push
-  image: public.ecr.aws/aws-cli/aws-cli:2.15.12  
+  image: docker:20.10.16
   before_script:
-    - apk add --no-cache docker  
+    - apt-get update && apt-get install -y curl python3 python3-pip
+    - pip3 install awscli
     - aws configure set aws_access_key_id "$AWS_ACCESS_KEY_ID"
     - aws configure set aws_secret_access_key "$AWS_SECRET_ACCESS_KEY"
     - aws configure set region "$AWS_REGION"
     - aws ecr get-login-password | docker login --username AWS --password-stdin $ECR_REPO
   script:
-    - set -e  
     - export IMAGE_TAG=$CI_COMMIT_SHORT_SHA
     - echo "Building image with tag:$IMAGE_TAG"
     - docker build -t $ECR_REPO:$IMAGE_TAG .
     - docker push $ECR_REPO:$IMAGE_TAG
-    - echo "image_tag=$IMAGE_TAG" > ./image_tag.env
-    - cat ./image_tag.env  
+    - echo "image_tag=$IMAGE_TAG" > image_tag.env
   artifacts:
     reports:
-      dotenv: image_tag.env  
+      dotenv: image_tag.env
+ 
 
 deploy:
   stage: deploy
