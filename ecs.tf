@@ -3,6 +3,12 @@ variable "image_tag" {
   type        = string
 }
 
+variable "ecr_repo" {
+  description = "ECR repository URL"
+  type        = string
+}
+
+
 #ECS cluster to run our containers
 resource "aws_ecs_cluster" "app_cluster" {
   name = "node-app-cluster"
@@ -52,7 +58,8 @@ resource "aws_ecs_task_definition" "app" {
       name      = "node-app"
 
       # uses the image tag passed to reference the correct container image version
-      image = "203918869432.dkr.ecr.us-east-1.amazonaws.com/node-app-devops:${var.image_tag}" 
+      image = "${var.ecr_repo}:${var.image_tag}"
+
 
       portMappings = [{
         containerPort = 3001

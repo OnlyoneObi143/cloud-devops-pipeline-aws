@@ -41,12 +41,13 @@ deploy:
     name: hashicorp/terraform:light
     entrypoint: [""]
   before_script:
-    - source image_tag.env       
-    - echo "Using image tag:$image_tag"
+    - source image_tag.env
     - echo "image_tag = \"$image_tag\"" > terraform.tfvars
+    - echo "ecr_repo = \"$ECR_REPO\"" >> terraform.tfvars
   script:
     - terraform init
     - terraform apply -auto-approve
+
 
 
 
