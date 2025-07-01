@@ -50,7 +50,8 @@ resource "aws_ecs_task_definition" "app" {
   requires_compatibilities = ["FARGATE"]                  # Run on Fargate
   cpu                      = "256"                        # CPU units
   memory                   = "512"                        # Memory in MiB
-  execution_role_arn       = aws_iam_role.ecs_task_execution_role.arn  # Role with permissions
+  task_role_arn = aws_iam_role.ecs_task_execution_role.arn # Gives Node.js access to AWS
+ 
 
   # Define the container and enable CloudWatch logging
   container_definitions = jsonencode([
