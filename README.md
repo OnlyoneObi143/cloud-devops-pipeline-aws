@@ -1,6 +1,6 @@
 # cloud-devops-pipeline-aws Project
 
-This is **Phase 1-4** of my personal project demonstrating how to build and deploy a containerized Node.js application using GitLab CI/CD and AWS services like ECS, ECR, and CloudWatch. It simulates a real-world DevOps pipeline and showcases skills relevant to both DevOps and Cloud Engineering roles.
+This is **Phase 1-5** of my personal project demonstrating how to build and deploy a containerized Node.js application using GitLab CI/CD and AWS services like ECS, ECR, and CloudWatch. It simulates a real-world DevOps pipeline and showcases skills relevant to both DevOps and Cloud Engineering roles.
 
 ## Tech Stack
 - Node.js + Express
@@ -31,4 +31,17 @@ This is **Phase 1-4** of my personal project demonstrating how to build and depl
 ✅ Docker image built on commit and pushed to GitLab Container Registry  
 ✅ ECS service updated automatically via GitLab pipeline using AWS CLI  
 
+## Phase 5 Summary
+✅ Integrated AWS CloudWatch to monitor custom application metrics  
+✅ Implemented `RequestsPerMinute` metric in Node.js using AWS SDK  
+✅ Metrics published and visualized in real-time on a custom CloudWatch graph  
+✅ IAM roles and permissions configured to allow secure metric publishing from ECS tasks
+
+
+
+## 📊 Monitoring Dashboard
+
+Below is a snapshot of the custom `RequestsPerMinute` CloudWatch metric published from AWS:
+
+![CloudWatch Graph](./assets/cloudwatch-metrics.png)
 
