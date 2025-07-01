@@ -37,7 +37,7 @@ app.get('/', async (req, res) => {
     }
   });
 
-  res.send('Hello welcome to my site!');
+  res.send('Hello, welcome to my site!!');
 });
 
 // Start server
