@@ -43,5 +43,5 @@ This is **Phase 1-5** of my personal project demonstrating how to build and depl
 
 Below is a snapshot of the custom `RequestsPerMinute` CloudWatch metric published from AWS:
 
-![CloudWatch Graph](./assets/cloudwatch-metrics.png)
+![CloudWatch Graph](./images/cloudwatch-metrics.png)
 
