@@ -37,6 +37,29 @@ resource "aws_iam_role_policy_attachment" "ecs_task_execution_policy" {
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
 }
 
+#policy to allow publishing CloudWatch metrics
+resource "aws_iam_policy" "cloudwatch_custom_metrics" {
+  name        = "AllowCloudWatchCustomMetrics"
+  description = "Allow PutMetricData for custom metrics"
+  policy      = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Effect   = "Allow",
+        Action   = ["cloudwatch:PutMetricData"],
+        Resource = "*"
+      }
+    ]
+  })
+}
+
+#policy to the ECS task execution role
+resource "aws_iam_role_policy_attachment" "cloudwatch_custom_metrics_attachment" {
+  role       = aws_iam_role.ecs_task_execution_role.name
+  policy_arn = aws_iam_policy.cloudwatch_custom_metrics.arn
+}
+
+
 # CloudWatch Log Group for container logs
   resource "aws_cloudwatch_log_group" "app_logs" {
   name              = "/ecs/node-app-devops"  # name for the logs
