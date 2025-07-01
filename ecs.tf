@@ -87,10 +87,6 @@ resource "aws_ecs_service" "app_service" {
 
   force_new_deployment = true
 
-   lifecycle {
-    ignore_changes = [task_definition]
-  }
-
   depends_on = [aws_ecs_task_definition.app]
 
   network_configuration {
